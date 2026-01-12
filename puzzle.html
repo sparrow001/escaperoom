@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>21 Character Checker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Orbitron', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0b132b, #000);
+      color: #e0e6ff;
+    }
+
+    h2 {
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      text-shadow: 0 0 8px rgba(120,140,255,0.6);
+    }
+
+    .inputs {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 18px 22px;
+      background: rgba(10, 20, 60, 0.6);
+      border: 1px solid rgba(120,140,255,0.3);
+      border-radius: 14px;
+      box-shadow:
+        0 0 20px rgba(80,100,255,0.25),
+        inset 0 0 18px rgba(40,60,180,0.25);
+    }
+
+    .inputs input {
+      width: 36px;
+      height: 44px;
+      text-align: center;
+      font-size: 18px;
+      font-family: 'Orbitron', monospace;
+      color: #9fb3ff;
+      background: linear-gradient(180deg, #020617, #050b2a);
+      border: 1px solid rgba(120,140,255,0.45);
+      border-radius: 6px;
+      outline: none;
+      box-shadow:
+        inset 0 0 6px rgba(120,140,255,0.4),
+        0 0 6px rgba(80,100,255,0.35);
+      transition: all 0.15s ease;
+    }
+
+    .inputs input:focus {
+      border-color: #7aa2ff;
+      box-shadow:
+        0 0 12px rgba(122,162,255,0.9),
+        inset 0 0 10px rgba(122,162,255,0.6);
+      transform: translateY(-1px);
+    }
+
+    button {
+      margin-top: 6px;
+      padding: 10px 22px;
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: #cfd8ff;
+      background: linear-gradient(180deg, #101a4a, #050b2a);
+      border: 1px solid rgba(120,140,255,0.5);
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow:
+        0 0 16px rgba(80,100,255,0.4),
+        inset 0 0 10px rgba(40,60,180,0.4);
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      box-shadow:
+        0 0 24px rgba(120,160,255,0.9),
+        inset 0 0 14px rgba(120,160,255,0.6);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow:
+        0 0 10px rgba(80,100,255,0.5),
+        inset 0 0 6px rgba(40,60,180,0.4);
+    }
+
+    .result {
+      margin-top: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .success {
+      color: #7dffb3;
+      text-shadow: 0 0 10px rgba(125,255,179,0.8);
+    }
+
+    .error {
+      color: #ff6b6b;
+      text-shadow: 0 0 10px rgba(255,107,107,0.8);
+    }
+
+    .puzzles-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      padding: 8px 14px;
+      font-size: 13px;
+      letter-spacing: 1px;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+  <button class="puzzles-btn" onclick="goToPuzzles()">Puzzles</button>
+  <h2>Crack the code.</h2>
+
+  <div class="inputs" id="inputs"></div>
+
+  <button onclick="checkAnswer()">Check</button>
+
+  <div class="result" id="result"></div>
+  
+    <div class="final-icon" id="finalIcon"></div>
+  </div>
+
+  <script>
+    const puzzles = {
+    c4ca4238a0b923820dcc509a6f75849b: "7291da7a3e046cdc952bfe8282c57483",
+    c81e728d9d4c2f636f067f89cc14862c: "f97c5d29941bfb1b2fdab0874906ab82",
+    eccbc87e4b5ce2fe28308fd9f2a7baf3: "30056e1cab7a61d256fc8edd970d14f5",
+    a87ff679a2f3e71d9181a67b7542122c: "8cbad96aced40b3838dd9f07f6ef5772"
+    }
+    const lengths = {
+      c4ca4238a0b923820dcc509a6f75849b: "INPUT21",
+    c81e728d9d4c2f636f067f89cc14862c: "BOX",
+    eccbc87e4b5ce2fe28308fd9f2a7baf3: "BOX",
+    a87ff679a2f3e71d9181a67b7542122c: "BOX"
+    }
+    const TARGET = puzzles[new URLSearchParams(window.location.search).get('h')] || "INVALID_PUZZLE_HASH";
+    console.log("Expected answer:", TARGET);
+
+    const inputsContainer = document.getElementById("inputs");
+    const resultEl = document.getElementById("result");
+
+    // Create 21 single-character inputs
+    if (lengths[new URLSearchParams(window.location.search).get('h')] == "INPUT21") {
+      for (let i = 0; i < "XXXXX_XX_XXX_XXXXX_XXXXXX".length; i++) {
+      // Render a visual break instead of an input for underscores
+      if ("XXXXX_XX_XXX_XXXXX_XXXXXX"[i] === "_") {
+        const divider = document.createElement("div");
+        divider.style.width = "14px";
+        divider.style.height = "44px";
+        inputsContainer.appendChild(divider);
+        continue;
+      }
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = 1;
+      input.dataset.index = i;
+
+      // Auto-move to next real input
+      input.addEventListener("input", () => {
+        // Force uppercase
+        input.value = input.value.toUpperCase();
+
+        let next = input.nextElementSibling;
+        while (next && next.tagName !== "INPUT") {
+          next = next.nextElementSibling;
+        }
+        if (input.value && next) next.focus();
+      });
+
+      inputsContainer.appendChild(input);
+    }
+
+    }
+    else if (lengths[new URLSearchParams(window.location.search).get('h')] == "BOX") {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.style.width = "300px";
+      input.style.gridColumn = "span 21";
+      input.maxLength = TARGET.length;
+
+      // Force uppercase
+      input.addEventListener("input", () => {
+        input.value = input.value.toUpperCase();
+      });
+
+      inputsContainer.appendChild(input);
+    }
+    var MD5 = function(d){var r = M(V(Y(X(d),8*d.length)));return r.toLowerCase()};function M(d){for(var _,m="0123456789ABCDEF",f="",r=0;r<d.length;r++)_=d.charCodeAt(r),f+=m.charAt(_>>>4&15)+m.charAt(15&_);return f}function X(d){for(var _=Array(d.length>>2),m=0;m<_.length;m++)_[m]=0;for(m=0;m<8*d.length;m+=8)_[m>>5]|=(255&d.charCodeAt(m/8))<<m%32;return _}function V(d){for(var _="",m=0;m<32*d.length;m+=8)_+=String.fromCharCode(d[m>>5]>>>m%32&255);return _}function Y(d,_){d[_>>5]|=128<<_%32,d[14+(_+64>>>9<<4)]=_;for(var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;n<d.length;n+=16){var h=m,t=f,g=r,e=i;f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+8],7,1770035416),f,r,d[n+9],12,-1958414417),m,f,d[n+10],17,-42063),i,m,d[n+11],22,-1990404162),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+12],7,1804603682),f,r,d[n+13],12,-40341101),m,f,d[n+14],17,-1502002290),i,m,d[n+15],22,1236535329),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+1],5,-165796510),f,r,d[n+6],9,-1069501632),m,f,d[n+11],14,643717713),i,m,d[n+0],20,-373897302),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+5],5,-701558691),f,r,d[n+10],9,38016083),m,f,d[n+15],14,-660478335),i,m,d[n+4],20,-405537848),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+9],5,568446438),f,r,d[n+14],9,-1019803690),m,f,d[n+3],14,-187363961),i,m,d[n+8],20,1163531501),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+13],5,-1444681467),f,r,d[n+2],9,-51403784),m,f,d[n+7],14,1735328473),i,m,d[n+12],20,-1926607734),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+5],4,-378558),f,r,d[n+8],11,-2022574463),m,f,d[n+11],16,1839030562),i,m,d[n+14],23,-35309556),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+1],4,-1530992060),f,r,d[n+4],11,1272893353),m,f,d[n+7],16,-155497632),i,m,d[n+10],23,-1094730640),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+13],4,681279174),f,r,d[n+0],11,-358537222),m,f,d[n+3],16,-722521979),i,m,d[n+6],23,76029189),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+9],4,-640364487),f,r,d[n+12],11,-421815835),m,f,d[n+15],16,530742520),i,m,d[n+2],23,-995338651),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+0],6,-198630844),f,r,d[n+7],10,1126891415),m,f,d[n+14],15,-1416354905),i,m,d[n+5],21,-57434055),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+12],6,1700485571),f,r,d[n+3],10,-1894986606),m,f,d[n+10],15,-1051523),i,m,d[n+1],21,-2054922799),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+8],6,1873313359),f,r,d[n+15],10,-30611744),m,f,d[n+6],15,-1560198380),i,m,d[n+13],21,1309151649),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+4],6,-145523070),f,r,d[n+11],10,-1120210379),m,f,d[n+2],15,718787259),i,m,d[n+9],21,-343485551),m=safe_add(m,h),f=safe_add(f,t),r=safe_add(r,g),i=safe_add(i,e)}return Array(m,f,r,i)}function md5_cmn(d,_,m,f,r,i){return safe_add(bit_rol(safe_add(safe_add(_,d),safe_add(f,i)),r),m)}function md5_ff(d,_,m,f,r,i,n){return md5_cmn(_&m|~_&f,d,_,r,i,n)}function md5_gg(d,_,m,f,r,i,n){return md5_cmn(_&f|m&~f,d,_,r,i,n)}function md5_hh(d,_,m,f,r,i,n){return md5_cmn(_^m^f,d,_,r,i,n)}function md5_ii(d,_,m,f,r,i,n){return md5_cmn(m^(_|~f),d,_,r,i,n)}function safe_add(d,_){var m=(65535&d)+(65535&_);return(d>>16)+(_>>16)+(m>>16)<<16|65535&m}function bit_rol(d,_){return d<<_|d>>>32-_}
+
+    function checkAnswer() {
+      let result = "";
+      [...inputsContainer.children].forEach(el => {
+        if (el.tagName === "INPUT") result += el.value;
+        else result += "_";
+      });
+
+      if (/\d/.test(result)) {
+        resultEl.textContent = "Spell out all numbers.";
+        resultEl.className = "result error";
+        return;
+      }
+      if (MD5(result.toLowerCase()) === TARGET) {
+        resultEl.textContent = "ACCESS GRANTED";
+        resultEl.className = "result success";
+      } else {
+        resultEl.textContent = "ACCESS DENIED";
+        resultEl.className = "result error";
+      }
+    }
+
+    function goToPuzzles() {
+      // Replace this with your actual home page URL
+      window.location.href = "index.html";
+    };
+  </script>
+</body>
+</html>
