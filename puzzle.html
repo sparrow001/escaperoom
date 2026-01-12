@@ -138,16 +138,22 @@
     c4ca4238a0b923820dcc509a6f75849b: "7291da7a3e046cdc952bfe8282c57483",
     c81e728d9d4c2f636f067f89cc14862c: "f97c5d29941bfb1b2fdab0874906ab82",
     eccbc87e4b5ce2fe28308fd9f2a7baf3: "30056e1cab7a61d256fc8edd970d14f5",
-    a87ff679a2f3e71d9181a67b7542122c: "8cbad96aced40b3838dd9f07f6ef5772"
+    a87ff679a2f3e71d9181a67b7542122c: "8cbad96aced40b3838dd9f07f6ef5772",
+    "0f7119ae045ffdc687dff698500e9483": "49e422561d21ca6b047b965afd582e33",
+    "7589954b2be22cf0fa09e07a70fb56d5": "414c8353aee97c0cf173ca489673be1d"
     }
     const lengths = {
       c4ca4238a0b923820dcc509a6f75849b: "INPUT21",
     c81e728d9d4c2f636f067f89cc14862c: "BOX",
     eccbc87e4b5ce2fe28308fd9f2a7baf3: "BOX",
-    a87ff679a2f3e71d9181a67b7542122c: "BOX"
+    a87ff679a2f3e71d9181a67b7542122c: "BOX",
+    "0f7119ae045ffdc687dff698500e9483": "BOX",
+    "7589954b2be22cf0fa09e07a70fb56d5": "BOX"
     }
     const TARGET = puzzles[new URLSearchParams(window.location.search).get('h')] || "INVALID_PUZZLE_HASH";
-    console.log("Expected answer:", TARGET);
+    if (TARGET === "INVALID_PUZZLE_HASH") {
+      window.location.href = "index.html";
+    }
 
     const inputsContainer = document.getElementById("inputs");
     const resultEl = document.getElementById("result");
